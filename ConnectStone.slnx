@@ -12,6 +12,6 @@
   </Folder>
   <Folder Name="/sdk/">
     <Project Path="src/sdk/ConnectStone.Sdk.Tests/ConnectStone.Sdk.Tests.csproj" />
-    <Project Path="src/sdk/ConnectStone.sdk/ConnectStone.Sdk.csproj" />
+    <Project Path="src/sdk/ConnectStone.Sdk/ConnectStone.Sdk.csproj" />
   </Folder>
 </Solution>
