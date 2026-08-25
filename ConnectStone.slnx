@@ -1,4 +1,15 @@
 <Solution>
+  <Folder Name="/backend/">
+    <Project Path="src/backend/Api/Api.csproj" />
+    <Project Path="src/backend/Application/Application.csproj" />
+    <Project Path="src/backend/Domain/Domain.csproj" />
+    <Project Path="src/backend/Infrastructure/Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/backend/tests/">
+    <Project Path="src/backend/tests/Api.IntegrationTests/Api.IntegrationTests.csproj" />
+    <Project Path="src/backend/tests/Application.Tests/Application.Tests.csproj" />
+    <Project Path="src/backend/tests/Domain.Tests/Domain.Tests.csproj" />
+  </Folder>
   <Folder Name="/sdk/">
     <Project Path="src/sdk/ConnectStone.Sdk.Tests/ConnectStone.Sdk.Tests.csproj" />
     <Project Path="src/sdk/ConnectStone.sdk/ConnectStone.Sdk.csproj" />
