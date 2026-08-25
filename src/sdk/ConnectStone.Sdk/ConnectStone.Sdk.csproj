@@ -4,7 +4,28 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup Label="NuGet packaging">
+    <PackageId>ConnectStone.Sdk</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Leonardo Valença</Authors>
+    <Description>A typed .NET client for Stone's Connect Stone card-machine order API (Pagar.me Core v5), plus a webhook handler for payment confirmation events.</Description>
+    <PackageTags>stone;pagarme;connect-stone;payments;pos;webhook</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/leonardo-valenca/connect-stone</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/leonardo-valenca/connect-stone</PackageProjectUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.0.0" />
