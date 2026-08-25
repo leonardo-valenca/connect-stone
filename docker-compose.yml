@@ -1,0 +1,42 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/backend/Api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Sqlite: "Data Source=/data/connectstone-demo.db"
+      ConnectStone__SecretKey: ${CONNECT_STONE_SECRET_KEY:?Set CONNECT_STONE_SECRET_KEY in a .env file, see .env.example}
+      # Optional: Connect Stone's docs list this as required, but it's only issued through the
+      # Stone Partner Program, and a working reference integration sends requests without it.
+      # Leave blank in .env to omit the header entirely.
+      ConnectStone__ServiceRefererName: ${CONNECT_STONE_SERVICE_REFERER_NAME:-}
+      # Optional: Pagar.me allows configuring a webhook without authentication. Leave both blank
+      # in .env to match that, or set both to match credentials configured on the Pagar.me side.
+      # See WebhookAuthenticator for the security tradeoff of running without them.
+      ConnectStone__Webhook__Username: ${CONNECT_STONE_WEBHOOK_USERNAME:-}
+      ConnectStone__Webhook__Password: ${CONNECT_STONE_WEBHOOK_PASSWORD:-}
+    volumes:
+      - orders-data:/data
+    # No published port here on purpose, the proxy is the only public entry point.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  proxy:
+    build:
+      context: .
+      dockerfile: proxy/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  orders-data:

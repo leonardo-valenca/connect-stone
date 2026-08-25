@@ -1,0 +1,35 @@
+# Plain HTTP on an explicit port. Caddy's automatic HTTPS only kicks in for a real domain name,
+# and this demo doesn't handle credentials/cookies that would need it. Point a real domain at
+# `:80` here (or add one as the site address) to get a Let's Encrypt cert automatically instead.
+:80 {
+	handle /orders* {
+		reverse_proxy api:8080
+	}
+
+	handle /webhooks/* {
+		reverse_proxy api:8080
+	}
+
+	handle /demo/* {
+		reverse_proxy api:8080
+	}
+
+	# SignalR: Caddy proxies the WebSocket upgrade transparently, no extra config needed.
+	handle /hubs/* {
+		reverse_proxy api:8080
+	}
+
+	handle /alive {
+		reverse_proxy api:8080
+	}
+
+	handle /ready {
+		reverse_proxy api:8080
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
