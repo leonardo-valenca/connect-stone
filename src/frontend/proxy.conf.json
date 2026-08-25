@@ -1,0 +1,5 @@
+{
+  "/orders": { "target": "http://localhost:5177", "secure": false, "changeOrigin": true },
+  "/demo": { "target": "http://localhost:5177", "secure": false, "changeOrigin": true },
+  "/hubs": { "target": "http://localhost:5177", "secure": false, "changeOrigin": true, "ws": true }
+}

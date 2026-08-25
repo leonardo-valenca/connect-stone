@@ -1,0 +1,129 @@
+<div class="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:py-12">
+    <header class="mb-8 flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">Connect Stone Demo</h1>
+        <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          Orders created here are sent to a real Stone card machine via the Connect Stone SDK.
+        </p>
+      </div>
+
+      <div class="flex shrink-0 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-medium dark:border-neutral-800 dark:bg-neutral-900">
+        <span
+          class="h-2 w-2 rounded-full"
+          [class.bg-emerald-500]="hub.status() === 'connected'"
+          [class.bg-amber-500]="hub.status() === 'connecting'"
+          [class.bg-neutral-400]="hub.status() === 'disconnected'"
+        ></span>
+        <span class="text-neutral-600 dark:text-neutral-300">{{ hub.status() }}</span>
+      </div>
+    </header>
+
+    @if (ordersService.errorMessage(); as error) {
+      <div class="mb-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300">
+        {{ error }}
+      </div>
+    }
+
+    <form
+      class="mb-10 rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+      (ngSubmit)="createOrder()"
+    >
+      <h2 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">New order</h2>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <label class="flex flex-col gap-1 text-sm">
+          <span class="text-neutral-600 dark:text-neutral-400">Customer name</span>
+          <input
+            class="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-500 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-500 dark:focus:ring-neutral-100/10"
+            [ngModel]="customerName()"
+            (ngModelChange)="customerName.set($event)"
+            name="customerName"
+            required
+          />
+        </label>
+
+        <label class="flex flex-col gap-1 text-sm">
+          <span class="text-neutral-600 dark:text-neutral-400">Description</span>
+          <input
+            class="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-500 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-500 dark:focus:ring-neutral-100/10"
+            [ngModel]="description()"
+            (ngModelChange)="description.set($event)"
+            name="description"
+            placeholder="Coffee"
+            required
+          />
+        </label>
+
+        <label class="flex flex-col gap-1 text-sm">
+          <span class="text-neutral-600 dark:text-neutral-400">Amount (BRL)</span>
+          <input
+            class="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-500 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-500 dark:focus:ring-neutral-100/10"
+            type="number"
+            min="0.01"
+            step="0.01"
+            [ngModel]="amount()"
+            (ngModelChange)="amount.set($event)"
+            name="amount"
+            required
+          />
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        class="mt-4 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40 dark:bg-neutral-100 dark:text-neutral-900"
+        [disabled]="!canSubmit() || submitting()"
+      >
+        {{ submitting() ? 'Sending to machine…' : 'Send to card machine' }}
+      </button>
+    </form>
+
+    <h2 class="mb-3 text-sm font-medium text-neutral-700 dark:text-neutral-300">Orders</h2>
+
+    @if (ordersService.loading()) {
+      <p class="text-sm text-neutral-500 dark:text-neutral-400">Loading…</p>
+    } @else if (ordersService.orders().length === 0) {
+      <p class="text-sm text-neutral-500 dark:text-neutral-400">No orders yet, create one above.</p>
+    } @else {
+      <div class="overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-neutral-200 text-xs uppercase tracking-wide text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
+            <tr>
+              <th class="px-4 py-3 font-medium">Customer</th>
+              <th class="px-4 py-3 font-medium">Description</th>
+              <th class="px-4 py-3 font-medium">Amount</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+              <th class="px-4 py-3 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of ordersService.orders(); track order.id) {
+              <tr class="border-b border-neutral-100 last:border-0 dark:border-neutral-800">
+                <td class="px-4 py-3 text-neutral-900 dark:text-neutral-100">{{ order.customerName }}</td>
+                <td class="px-4 py-3 text-neutral-600 dark:text-neutral-400">{{ order.description }}</td>
+                <td class="px-4 py-3 text-neutral-900 dark:text-neutral-100">{{ formatAmount(order.amountInCents) }}</td>
+                <td class="px-4 py-3">
+                  <span class="rounded-full px-2 py-0.5 text-xs font-medium" [class]="statusClasses(order.status)">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-right">
+                  @if (order.status === 'Open') {
+                    <button
+                      class="rounded-md border border-neutral-300 px-3 py-1 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:opacity-40 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                      [disabled]="simulatingOrderId() === order.id"
+                      (click)="simulatePayment(order.id)"
+                    >
+                      {{ simulatingOrderId() === order.id ? 'Simulating…' : 'Simulate payment' }}
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
