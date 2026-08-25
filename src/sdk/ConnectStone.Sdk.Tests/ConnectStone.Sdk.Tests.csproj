@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConnectStone.sdk\ConnectStone.Sdk.csproj" />
+    <ProjectReference Include="..\ConnectStone.Sdk\ConnectStone.Sdk.csproj" />
   </ItemGroup>
 
 </Project>
