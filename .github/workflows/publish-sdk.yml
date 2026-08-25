@@ -1,0 +1,20 @@
+name: Publish SDK to NuGet
+
+# Not wired up yet, see the root README's "Publishing the SDK" section. Requires a NUGET_API_KEY
+# repo secret before this can succeed; until then, pushing a tag here will just fail at the push
+# step, which is intentional (the pack/build still gets validated).
+on:
+  push:
+    tags:
+      - "sdk-v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - run: dotnet pack src/sdk/ConnectStone.Sdk/ConnectStone.Sdk.csproj -c Release -o ./nupkg
+      - run: dotnet nuget push "./nupkg/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
